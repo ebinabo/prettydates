@@ -1,0 +1,15 @@
+Package: prettydates
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Author: J Edgar
+Maintainer: J Edgar <edgarjohn95@gmail.com>
+Description: Takes a date or a vector of dates and puts them in a
+    bunch of pretty display formats.
+    48 formats as of Dec 28th, 2018
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    purrr
+RoxygenNote: 6.1.1
