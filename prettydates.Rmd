@@ -1,0 +1,178 @@
+---
+title: "prettydates"
+author: "ebinabo"
+date: "December 28, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is the documentation for the package at <https://github.com/ebinabo/prettydates>
+
+A beginner level knowledge of R is assumed.
+
+Totally new to R? Some resources are cited at the bottom of the page.
+
+Package can be installed using `install_github('ebinabo/prettydates')`
+
+## Load the Libaries
+
+```{r libraries}
+library(prettydates)
+library(purrr) # map functions
+library(knitr) # to use the kable function for pretty tables
+```
+
+The library takes in dates in `Date`, `POSIXct`, `POSIXt`, etc formats and prints them to the screen in a more easily readable format.
+
+These are particularly useful for creating documents where you might want the date out in full, so they could be easily read out or skimmed through.
+
+Let's list out all the functions currently listed in the package...
+
+Some of the prefixes and suffixes used and their descriptions for a better overview;
+
+- `long_` dates with weekday, month, year in full
+- `short_` dates with weekday, month, year in short
+- `_day_month_` displaying day and month, w/o year
+- `_dt12` datetime in a 12hr format
+- `_dt24` datetime in a 24hr format
+- `_w` dates including day of week
+- `_us` dates in the american format
+
+```{r ls functions, echo=FALSE}
+unclass(lsf.str(envir = asNamespace("prettydates"), all = T))
+```
+
+## Usage
+
+Functions can be used on different classes of objects including;
+
+- a single date or datetime object
+- a vector of dates or datetime objects
+- a column of dates or datetime objects
+- a column of dates or datetime objects within a list using the map() family of functions
+
+Here are some examples
+
+### Single Date or Datetime object
+
+```{r single}
+long_date(Sys.Date())
+long_dt12_us_w(Sys.time())
+```
+
+
+### Vector of Dates or Datetime objects
+
+```{r vector}
+seq_date <- seq.Date(Sys.Date()-70, Sys.Date(), 7)
+short_date(seq_date)
+
+times <- c(Sys.time(), Sys.time()-1e02, Sys.time()-1e03, Sys.time()-1e04, Sys.time()-1e05)
+short_dt24_us(times)
+```
+
+### Column of Dates or Datetime objects
+
+Lets create a sample dataframe showing different orders made on different days
+
+```{r df init}
+order_id <- paste("Order", 1:10, sep = " ")
+order_dates <- seq.Date(Sys.Date()-70, Sys.Date(), 1)
+order_dates <- sample(order_dates, 10)
+order_history <- as.data.frame(order_dates)
+row.names(order_history) <- order_id
+names(order_history) <- "Date"
+kable(order_history)
+```
+
+Now let's use one of the funtions from prettydates to change the display rendered. The time of order is set to a default 12:00:00 AM because we're using a sample of dates
+
+```{r df w prettydates}
+order_history$Date <- short_dt12_us_w(order_history$Date)
+kable(order_history)
+```
+
+### Column of Dates or Datetime objects in a list
+
+For more advanced users, the current block of code doesn't return any errors but the desired output which should look like "28 December" returns a different output
+
+If you have a clue how to fix this, please fork me on github <https://github.com/ebinabo>
+
+```{r}
+order_history_1 <- order_history
+order_history_1$Date <- map(order_history_1$Date, long_day_month)
+kable(order_history_1)
+```
+
+### All the functions in action
+
+Here are what all the functions should return if used on the current date
+
+```{r in action, error=T}
+todays_date <- Sys.Date()
+current_time <- Sys.time()
+
+long_date(todays_date) #1
+long_date_us(todays_date) #2
+long_date_us_w(todays_date) #3
+long_date_w(todays_date) #4
+long_day_month(todays_date) #5
+long_day_month_dt12(current_time) #6
+long_day_month_dt12_us(current_time) #7
+long_day_month_dt12_us_w(current_time) #8
+long_day_month_dt12_w(current_time) #9
+long_day_month_dt24(current_time) #10
+long_day_month_dt24_us(current_time) #11
+long_day_month_dt24_us_w(current_time) #12
+long_day_month_us(todays_date) #13
+long_day_month_us_w(todays_date) #14
+long_day_month_w(current_time) #15
+long_dt12(current_time) #16
+long_dt12_us(current_time) #17
+long_dt12_us_w(current_time) #18
+long_dt12_w(current_time) #19
+long_dt24(current_time) #20
+long_dt24_us(current_time) #21
+long_dt24_us_w(current_time) #22
+long_dt24_w(current_time) #23
+
+short_date(todays_date) #24
+short_date_us(todays_date) #25
+short_date_us_w(todays_date) #26
+short_date_w(todays_date) #27
+short_day_month(todays_date) #28
+short_day_month_dt12(current_time) #29
+short_day_month_dt12_us(current_time) #30
+short_day_month_dt12_us_w(current_time) #31
+short_day_month_dt12_w(current_time) #32
+short_day_month_dt24(current_time) #33
+short_day_month_dt24_us(current_time) #34
+short_day_month_dt24_us_w(current_time) #35
+short_day_month_us(todays_date) #36
+short_day_month_us_w(todays_date) #37
+short_day_month_w(current_time) #38
+short_dt12(current_time) #39
+short_dt12_us(current_time) #40
+short_dt12_us_w(current_time) #41
+short_dt12_w(current_time) #42
+short_dt24(current_time) #43
+short_dt24_us(current_time) #44
+short_dt24_us_w(current_time) #45
+short_dt24_w(current_time) #46
+```
+
+
+### Resources
+
+Some useful resources are cited below to help you grasp some of these functions better
+
+<https://www.datacamp.com/courses/free-introduction-to-r> for an introduction to R
+
+<https://jennybc.github.io/purrr-tutorial> for a purrr tutorial
+
+<https://www.datacamp.com/courses/intermediate-functional-programming-with-purrr> for creating mappers
+
+
