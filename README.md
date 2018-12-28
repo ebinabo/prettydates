@@ -1,4 +1,5 @@
 # prettydates
+
 Takes a date or a vector of dates and puts them in a  bunch of pretty display formats.  46 formats as of Dec 28th, 2018.
 
 Useful for creating documents as dates are easily read or skimmed through
@@ -17,4 +18,4 @@ returns a vector of class, character
 This is just a tip of the iceberg, functions can be used within the map*() functions from the purrr package 
 
 The tutorial of using prettydates is stored in prettydates.html, so you could view that after downloading the package
-
+or at https://ebinabo.github.io/prettydates/prettydates.html
