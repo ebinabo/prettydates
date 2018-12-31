@@ -7,13 +7,20 @@ Useful for creating documents as dates are easily read or skimmed through
 eg. 
 
 seq_date <- seq.Date(Sys.Date()-70, Sys.Date(), 7)
-short_date(seq_date)
+
+seq_date <- short_date(seq_date)
+
+seq_date
 
 returns a vector of class, character
 
-"19 Oct, 18", "26 Oct, 18", "02 Nov, 18", "09 Nov, 18", "16 Nov, 18",
-"23 Nov, 18", "30 Nov, 18", "07 Dec, 18", "14 Dec, 18", "21 Dec, 18",
-"28 Dec, 18"
+"19 Oct, 2018", "26 Oct, 2018", "02 Nov, 2018", "09 Nov, 2018", "16 Nov, 2018",
+"23 Nov, 2018", "30 Nov, 2018", "07 Dec, 2018", "14 Dec, 2018", "21 Dec, 2018",
+"28 Dec, 2018"
+
+as_ordinal(seq_date[3]) returns
+
+"2nd Oct, 2018"
 
 This is just a tip of the iceberg, functions can be used within the map*() functions from the purrr package 
 
