@@ -1,15 +1,19 @@
 Package: prettydates
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
+Title: Displays dates in a pretty format
+Version: 1.0.0
 Author: J Edgar
 Maintainer: J Edgar <edgarjohn95@gmail.com>
 Description: Takes a date or a vector of dates and puts them in a
     bunch of pretty display formats.
-    48 formats as of Dec 28th, 2018
-License: What license is it under?
+    92 formats as of v 1.0.0
+License: Open Source
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    purrr
+    purrr,
+    toOrdinal,
+    knitr,
+    stringr,
+    stringi
 RoxygenNote: 6.1.1

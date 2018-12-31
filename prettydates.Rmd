@@ -1,3 +1,261 @@
+<<<<<<< HEAD
+---
+title: "prettydates"
+author: "ebinabo"
+date: "December 28, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This is the documentation for the package at [prettydates](https://github.com/ebinabo/prettydates)
+
+A beginner level knowledge of R is assumed.
+
+Totally new to R? Some resources are cited at the bottom of the page. Also if you have any questions about this or any issues with getting or using the package, feel free to reach me at [my twitter](https://www.twitter.com/kingnamedjohnny)
+
+Package can be installed using `install_github('ebinabo/prettydates')`
+
+
+## Load the Libaries
+
+
+```{r libraries, message=FALSE}
+  library(prettydates)
+  library(purrr) # map functions
+  library(knitr) # to use the kable function for pretty tables
+```
+
+The library takes in dates in `Date`, `POSIXct`, `POSIXt`, etc formats and prints them to the screen in a more easily readable format.
+
+These are particularly useful for creating documents where you might want the date out in full, so they could be easily read out or skimmed through.
+
+Let's list out all the functions currently listed in the package...
+
+Some of the prefixes and suffixes used and their descriptions for a better overview;
+
+- `long_` dates with weekday, month, year in full
+- `short_` dates with weekday, month, year in short
+- `_day_month_` displaying day and month, w/o year
+- `_dt12` datetime in a 12hr format
+- `_dt24` datetime in a 24hr format
+- `_w` dates including day of week
+- `_us` dates in the american format
+
+```{r ls functions, echo=FALSE}
+unclass(lsf.str(envir = asNamespace("prettydates"), all = T))
+```
+
+
+## Usage
+
+
+Functions can be used on different classes of objects including;
+
+- a single date or datetime object
+- a vector of dates or datetime objects
+- a column of dates or datetime objects
+- a column of dates or datetime objects within a list using the map() family of functions
+
+There is also the `as_ordinal()` function which is used alongside the above functions. It parses the date to an ordinal format eg.  *"Monday, December 31st, 2018"*  instead of  *"Monday, December 31st, 2018"*  if you just ran `long_dt12_us_w(()`
+
+Here are some examples
+
+
+### Single Date or Datetime object
+
+
+```{r single}
+long_date(Sys.Date())
+long_dt12_us(Sys.time()) %>% as_ordinal()
+```
+
+
+### Vector of Dates or Datetime objects
+
+
+```{r vector}
+seq_date <- seq.Date(Sys.Date()-70, Sys.Date(), 7)
+short_date(seq_date)
+
+times <- c(Sys.time(), Sys.time()-1e02, Sys.time()-1e03, Sys.time()-1e04, Sys.time()-1e05)
+times <- short_dt24_us(times)
+as_ordinal(times)
+```
+
+
+### Column of Dates or Datetime objects
+
+
+Lets create a sample dataframe showing different orders made on different days
+
+```{r df init}
+order_id <- paste("Order", 1:10, sep = " ")
+order_dates <- seq.Date(Sys.Date()-70, Sys.Date(), 1)
+order_dates <- sample(order_dates, 10)
+order_history <- as.data.frame(order_dates)
+row.names(order_history) <- order_id
+names(order_history) <- "Date"
+kable(order_history)
+```
+
+Now let's use one of the funtions from prettydates to change the display rendered. The time of order is set to a default 12:00:00 AM because we're using a sample of dates
+
+```{r df w prettydates}
+order_history$Date <- short_dt12_us_w(order_history$Date)
+kable(order_history)
+```
+
+
+### Column of Dates or Datetime objects in a list
+
+
+For this we'll be using the `map()` function from the purrr package.
+`map()` takes in two arguments, `map(.x, .f)` 
+
+`.x` is a list or vector
+`.f` is the function to be applied to the individual elements 
+
+```{r error=F}
+order_history_1 <- order_history
+order_history_1$Date <- map(order_history_1$Date, long_day_month)
+order_history_1$Date <- map(order_history_1$Date, ~as_ordinal(.x))
+kable(order_history_1)
+
+```
+
+
+Notice that while using `map()`, two different syntaxes are used. This is because, `as_ordinal()` is not a mapper function like all the other functions so we need a `~` *(pronounced tilde)* to tell r that for all the elements in `order_history_1$Date` also represented as `.x`, call `as_ordinal`. 
+
+However, it can also be used as without them :). This is something you could try if you have a `map()` function that isn't working.
+
+`map()` always returns a list, to return a vector use `map_chr()` instead.
+
+
+### Resources
+
+
+Some useful resources are cited below to help you grasp some of these functions better
+
+<https://www.datacamp.com/courses/free-introduction-to-r> for an introduction to R
+
+<https://jennybc.github.io/purrr-tutorial> for a purrr tutorial
+
+<https://www.datacamp.com/courses/intermediate-functional-programming-with-purrr> for creating mappers
+
+
+### All the functions in action
+
+
+Here are what all the functions should return if used on the current date
+
+```{r in action, error=F}
+todays_date <- Sys.Date()
+current_time <- Sys.time()
+
+long_date(todays_date) #1
+long_date_us(todays_date) #2
+long_date_us_w(todays_date) #3
+long_date_w(todays_date) #4
+long_day_month(todays_date) #5
+long_day_month_dt12(current_time) #6
+long_day_month_dt12_us(current_time) #7
+long_day_month_dt12_us_w(current_time) #8
+long_day_month_dt12_w(current_time) #9
+long_day_month_dt24(current_time) #10
+long_day_month_dt24_us(current_time) #11
+long_day_month_dt24_us_w(current_time) #12
+long_day_month_us(todays_date) #13
+long_day_month_us_w(todays_date) #14
+long_day_month_w(current_time) #15
+long_dt12(current_time) #16
+long_dt12_us(current_time) #17
+long_dt12_us_w(current_time) #18
+long_dt12_w(current_time) #19
+long_dt24(current_time) #20
+long_dt24_us(current_time) #21
+long_dt24_us_w(current_time) #22
+long_dt24_w(current_time) #23
+
+short_date(todays_date) #24
+short_date_us(todays_date) #25
+short_date_us_w(todays_date) #26
+short_date_w(todays_date) #27
+short_day_month(todays_date) #28
+short_day_month_dt12(current_time) #29
+short_day_month_dt12_us(current_time) #30
+short_day_month_dt12_us_w(current_time) #31
+short_day_month_dt12_w(current_time) #32
+short_day_month_dt24(current_time) #33
+short_day_month_dt24_us(current_time) #34
+short_day_month_dt24_us_w(current_time) #35
+short_day_month_us(todays_date) #36
+short_day_month_us_w(todays_date) #37
+short_day_month_w(current_time) #38
+short_dt12(current_time) #39
+short_dt12_us(current_time) #40
+short_dt12_us_w(current_time) #41
+short_dt12_w(current_time) #42
+short_dt24(current_time) #43
+short_dt24_us(current_time) #44
+short_dt24_us_w(current_time) #45
+short_dt24_w(current_time) #46
+
+long_date(todays_date) %>% as_ordinal() #47
+long_date_us(todays_date) %>% as_ordinal() #48
+long_date_us_w(todays_date) %>% as_ordinal() #49
+long_date_w(todays_date) %>% as_ordinal() #50
+long_day_month(todays_date) %>% as_ordinal() #51
+long_day_month_dt12(current_time) %>% as_ordinal() #52
+long_day_month_dt12_us(current_time) %>% as_ordinal() #53
+long_day_month_dt12_us_w(current_time) %>% as_ordinal() #54
+long_day_month_dt12_w(current_time) %>% as_ordinal() #55
+long_day_month_dt24(current_time) %>% as_ordinal() #56
+long_day_month_dt24_us(current_time) %>% as_ordinal() #57
+long_day_month_dt24_us_w(current_time) %>% as_ordinal() #58
+long_day_month_us(todays_date) %>% as_ordinal() #59
+long_day_month_us_w(todays_date) %>% as_ordinal() #60
+long_day_month_w(current_time) %>% as_ordinal() #61
+long_dt12(current_time) %>% as_ordinal() #62
+long_dt12_us(current_time) %>% as_ordinal() #63
+long_dt12_us_w(current_time) %>% as_ordinal() #64
+long_dt12_w(current_time) %>% as_ordinal() #65
+long_dt24(current_time) %>% as_ordinal() #66
+long_dt24_us(current_time) %>% as_ordinal() #67
+long_dt24_us_w(current_time) %>% as_ordinal() #68
+long_dt24_w(current_time) %>% as_ordinal() #69
+
+short_date(todays_date) %>% as_ordinal() #70
+short_date_us(todays_date) %>% as_ordinal() #71
+short_date_us_w(todays_date) %>% as_ordinal() #72
+short_date_w(todays_date) %>% as_ordinal() #73
+short_day_month(todays_date) %>% as_ordinal() #74
+short_day_month_dt12(current_time) %>% as_ordinal() #75
+short_day_month_dt12_us(current_time) %>% as_ordinal() #76
+short_day_month_dt12_us_w(current_time) %>% as_ordinal() #77
+short_day_month_dt12_w(current_time) %>% as_ordinal() #78
+short_day_month_dt24(current_time) %>% as_ordinal() #79
+short_day_month_dt24_us(current_time) %>% as_ordinal() #80
+short_day_month_dt24_us_w(current_time) %>% as_ordinal() #81
+short_day_month_us(todays_date) %>% as_ordinal() #82
+short_day_month_us_w(todays_date) %>% as_ordinal() #83
+short_day_month_w(current_time) %>% as_ordinal() #84
+short_dt12(current_time) %>% as_ordinal() #85
+short_dt12_us(current_time) %>% as_ordinal() #86
+short_dt12_us_w(current_time) %>% as_ordinal() #87
+short_dt12_w(current_time) %>% as_ordinal() #88
+short_dt24(current_time) %>% as_ordinal() #89
+short_dt24_us(current_time) %>% as_ordinal() #90
+short_dt24_us_w(current_time) %>% as_ordinal() #91
+short_dt24_w(current_time) %>% as_ordinal() #92
+```
+
+
+
+=======
 ---
 title: "prettydates"
 author: "ebinabo"
@@ -176,3 +434,4 @@ Some useful resources are cited below to help you grasp some of these functions 
 <https://www.datacamp.com/courses/intermediate-functional-programming-with-purrr> for creating mappers
 
 
+>>>>>>> fdfae6f46ad6dae79f7d1764239c9f29b2084f48
